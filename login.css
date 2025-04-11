@@ -1,0 +1,16 @@
+.error {
+    color: red;
+    font-size: 0.85em;
+    margin-top: 4px;
+  }
+  
+  .input-group {
+    margin-bottom: 16px;
+  }
+  
+  #mensajeRol {
+    color: green;
+    font-size: 1em;
+    margin-top: 10px;
+  }
+  

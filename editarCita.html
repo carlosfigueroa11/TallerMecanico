@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Editar Cita</title>
+  <link rel="stylesheet" href="diseño.css" />
+</head>
+<body>
+  <div class="contenedor">
+    <h2>Editar Cita</h2>
+    <form id="formEditarCita">
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha" name="fecha" required>
+
+      <label for="hora">Hora:</label>
+      <input type="time" id="hora" name="hora" required>
+
+      <label for="servicio">Servicio:</label>
+      <select id="servicio" name="servicio" required>
+        <option value="cambio_aceite">Cambio de Aceite</option>
+        <option value="alineacion_balanceo">Alineación y Balanceo</option>
+        <option value="frenos">Revisión de Frenos</option>
+        <option value="mantenimiento_general">Mantenimiento General</option>
+      </select>
+
+      <button type="submit" class="btn">Guardar Cambios</button>
+      <a href="citas.html" class="volver">← Volver a citas</a>
+    </form>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const index = parseInt(params.get("index"));
+    const citas = JSON.parse(localStorage.getItem("citas")) || [];
+
+    if (isNaN(index) || !citas[index]) {
+      alert("Cita no encontrada.");
+      window.location.href = "citas.html";
+    }
+
+    const cita = citas[index];
+
+    // Rellenar los campos
+    document.getElementById("fecha").value = cita.fecha;
+    document.getElementById("hora").value = cita.hora;
+    document.getElementById("servicio").value = cita.servicio;
+
+    document.getElementById("formEditarCita").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      // Obtener nuevos valores
+      const nuevaFecha = document.getElementById("fecha").value;
+      const nuevaHora = document.getElementById("hora").value;
+      const nuevoServicio = document.getElementById("servicio").value;
+
+      // Actualizar cita
+      cita.fecha = nuevaFecha;
+      cita.hora = nuevaHora;
+      cita.servicio = nuevoServicio;
+
+      citas[index] = cita;
+      localStorage.setItem("citas", JSON.stringify(citas));
+
+      window.location.href = "citas.html"; // Redirige despues de guardar
+    });
+  </script>
+</body>
+</html>

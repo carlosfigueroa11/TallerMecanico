@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios - Taller Mecanico</title>
+    <link rel="stylesheet" href="diseño.css">
+</head>
+<body>
+    <div class="ContenedorServicios">
+        <h2>Nuestros Servicios para Ofrecer:</h2>
+        <ul class="service-list">
+            <li>1. Cambio de Aceite</li>
+            <li>2. Alineación y Balanceo</li>
+            <li>3. Revisión de Frenos</li>
+            <li>4. Mantenimiento General</li>
+        </ul>
+
+        <div class="buttonsServicio">
+            <a href="home.html" class="btn btn-red">Volver al Inicio</a>
+            <a href="agendar.html" class="btn btn-green">Agendar Servicio</a>
+        </div>
+    </div>
+
+    <script>
+        // Definir servicios
+        const servicios = [
+            "Cambio de Aceite",
+            "Alineación y Balanceo",
+            "Revisión de Frenos",
+            "Mantenimiento General"
+        ];
+
+        // Guardar en localStorage si no están ya guardados
+        if (!localStorage.getItem("servicios")) {
+            localStorage.setItem("servicios", JSON.stringify(servicios));
+            console.log("Servicios cargados en localStorage");
+        } else {
+            console.log("Servicios ya estaban en localStorage");
+        }
+    </script>
+</body>
+</html>

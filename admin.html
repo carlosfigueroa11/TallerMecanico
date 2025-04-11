@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel del Administrador</title>
+  <style>
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .contenido {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenidoAdmin" class="contenido">
+    <h2>Bienvenido, Administrador</h2>
+    <p>Acceso exclusivo para el rol de administrador.</p>
+  </div>
+
+  <div id="mensajeError" class="error"></div>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem('usuarioActual'));
+    const contenido = document.getElementById('contenidoAdmin');
+    const mensajeError = document.getElementById('mensajeError');
+
+    if (usuario && usuario.role === 'admin') {
+      contenido.style.display = 'block';
+    } else {
+        // error al ingresar con un usuario que no es administrador
+      mensajeError.textContent = " Acceso denegado. Esta seccion es solo para administradores.";
+    }
+  </script>
+</body>
+</html>

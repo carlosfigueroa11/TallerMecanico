@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>REGISTRO - TALLER MECÁNICO</title>
+  <link rel="stylesheet" href="diseño.css" />
+  <style>
+    .error {
+      color: red;
+      font-size: 0.85em;
+      margin-top: 4px;
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h2>Taller Mecánico Memo</h2>
+
+    <form id="registroForm" novalidate>
+      <div class="input-group">
+        <input type="text" name="username" placeholder="Nombre de Usuario" id="username" />
+        <div id="usernameError" class="error"></div>
+      </div>
+
+      <div class="input-group">
+        <input type="password" name="password" placeholder="Contraseña" id="password" />
+        <div id="passwordError" class="error"></div>
+      </div>
+
+      <button type="submit" class="btn">Registrarse</button>
+    </form>
+
+    <p>¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+  </div>
+
+  <script>
+    // Función para convertir una contraseña a hash SHA-256
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    // Forzar que el usuario "carlos" tenga siempre rol "admin"
+    async function crearOActualizarAdmin() {
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      const index = usuarios.findIndex(u => u.username === "carlos");
+      const hashedPassword = await hashPassword("123456");
+
+      if (index === -1) {
+        // Si no existe, se crea
+        usuarios.push({ username: "carlos", password: hashedPassword, role: "admin" });
+      } else {
+        // Si ya existe, se actualiza su contraseña y rol
+        usuarios[index].password = hashedPassword;
+        usuarios[index].role = "admin";
+      }
+
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    }
+
+    document.addEventListener("DOMContentLoaded", crearOActualizarAdmin);
+
+    // Registro de nuevos usuarios
+    document.getElementById("registroForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const usernameInput = document.getElementById("username");
+      const passwordInput = document.getElementById("password");
+      const usernameError = document.getElementById("usernameError");
+      const passwordError = document.getElementById("passwordError");
+
+      const username = usernameInput.value.trim().toLowerCase();
+      const password = passwordInput.value;
+
+      // Limpiar errores anteriores
+      usernameError.textContent = "";
+      passwordError.textContent = "";
+      usernameInput.style.border = "";
+      passwordInput.style.border = "";
+
+      let valid = true;
+
+      if (username === "") {
+        usernameError.textContent = "El nombre de usuario no puede estar vacio.";
+        usernameInput.style.border = "2px solid red";
+        valid = false;
+      } else if (!/^[A-Za-z0-9]{3,15}$/.test(username)) {
+        usernameError.textContent = "Debe tener entre 3 y 15 caracteres, solo letras y numeros.";
+        usernameInput.style.border = "2px solid red";
+        valid = false;
+      }
+
+      if (password === "") {
+        passwordError.textContent = "La contraseña no puede estar vacia.";
+        passwordInput.style.border = "2px solid red";
+        valid = false;
+      } else if (password.length < 6) {
+        passwordError.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        passwordInput.style.border = "2px solid red";
+        valid = false;
+      }
+
+      if (!valid) return;
+
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      const existe = usuarios.find(u => u.username === username);
+
+      if (existe) {
+        usernameError.textContent = "Este usuario ya esta registrado.";
+        usernameInput.style.border = "2px solid red";
+        return;
+      }
+
+      const hashedPassword = await hashPassword(password);
+
+      usuarios.push({ username, password: hashedPassword, role: "usuario" });
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      // Redirige al login
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html>

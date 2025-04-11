@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita - Taller Mecánico</title>
+    <link rel="stylesheet" href="diseño.css">
+    <style>
+        .error {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="Agendarcontenedor">
+        <h2>Agendar Cita</h2>
+        <form id="formulario">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+            <span class="error" id="errorFecha"></span>
+
+            <label for="hora">Hora:</label>
+            <input type="time" id="hora" name="hora" required>
+            <span class="error" id="errorHora"></span>
+
+            <label for="servicio">Servicio Requerido:</label>
+            <select id="servicio" name="servicio" required>
+                <option value="">Seleccione un servicio</option>
+                <option value="cambio_aceite">Cambio de Aceite</option>
+                <option value="alineacion_balanceo">Alineación y Balanceo</option>
+                <option value="frenos">Revisión de Frenos</option>
+                <option value="mantenimiento_general">Mantenimiento General</option>
+            </select>
+            <span class="error" id="errorServicio"></span>
+
+            <button type="submit" class="btn1">Confirmar cita</button>
+        </form>
+
+        <a href="home.html" class="link2">Volver al Inicio</a>
+        <div id="errorLogin" class="error"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Verificar si el usuario esta logueado
+            const usuario = JSON.parse(localStorage.getItem("usuarioActual"));
+            const errorLogin = document.getElementById("errorLogin");
+
+            if (!usuario) {
+                // Mostrar error si no hay un usuario logueado
+                errorLogin.textContent = "Por favor, inicia sesión primero para agendar una cita.";
+                errorLogin.style.color = "red";
+                return;
+            }
+        });
+
+        document.getElementById("formulario").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let valido = true;
+    
+            let fecha = document.getElementById("fecha").value;
+            let hora = document.getElementById("hora").value;
+            let servicio = document.getElementById("servicio").value;
+    
+            let errorFecha = document.getElementById("errorFecha");
+            let errorHora = document.getElementById("errorHora");
+            let errorServicio = document.getElementById("errorServicio");
+    
+           
+            errorFecha.textContent = "";
+            errorHora.textContent = "";
+            errorServicio.textContent = "";
+    
+            // Validacion dela fecha
+            let fechaHoy = new Date().toISOString().split("T")[0];
+            if (fecha < fechaHoy) {
+                errorFecha.textContent = "No puedes seleccionar una fecha pasada.";
+                valido = false;
+            }
+    
+            // Validacion de la hora seleccionada
+            let horaMinima = "08:00";
+            let horaMaxima = "18:00";
+            if (hora < horaMinima || hora > horaMaxima) {
+                errorHora.textContent = "Selecciona una hora entre 08:00 y 18:00.";
+                valido = false;
+            }
+    
+            let minutos = hora.split(":")[1];
+            if (minutos !== "00") {
+                errorHora.textContent = "Solo se permiten horas en punto (ejemplo: 08:00, 09:00, 10:00).";
+                valido = false;
+            }
+    
+            // Validacion de servicio
+            if (servicio === "") {
+                errorServicio.textContent = "Por favor, selecciona un servicio.";
+                valido = false;
+            }
+    
+            // Si todo es valido se guarda la cita
+            if (valido) {
+                const usuario = JSON.parse(localStorage.getItem("usuarioActual"));
+                const nuevaCita = {
+                    fecha,
+                    hora,
+                    servicio,
+                    usuario: usuario.username // Asociar la cita al usuario logueado
+                };
+    
+                // Guardar cita en localStorage
+                const citas = JSON.parse(localStorage.getItem("citas")) || [];
+                citas.push(nuevaCita);
+                localStorage.setItem("citas", JSON.stringify(citas));
+    
+                // Redirigir a la pantalla de citas
+                window.location.href = "citas.html";
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bienvenido Usuario</title>
+  <style>
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .contenido {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="contenidoUsuario" class="contenido">
+    <h2>Hola, Usuario</h2>
+    <p>Has ingresado como usuario normal.</p>
+  </div>
+
+  <div id="mensajeError" class="error"></div>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem('usuarioActual'));
+    const contenido = document.getElementById('contenidoUsuario');
+    const mensajeError = document.getElementById('mensajeError');
+
+    if (usuario && usuario.role === 'usuario') {
+      contenido.style.display = 'block';
+    } else {
+      mensajeError.textContent = " Acceso denegado. Esta sección es solo para usuarios normales.";
+    }
+  </script>
+</body>
+</html>
+
